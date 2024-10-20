@@ -29,9 +29,15 @@ def signup_view(request):
                 [user.email],
                 fail_silently=False,
             )
-            return redirect('login')
-    else:
-        form = SignupForm()
+            # Return JSON response for AJAX
+            return JsonResponse({'success': True, 'redirect_url': '/login'}, status=200)
+        else:
+            # If the form is invalid, return JSON response with errors
+            errors = form.errors.as_json()  # Convert form errors to JSON
+            return JsonResponse({'success': False, 'errors': errors}, status=400)
+    
+    # For GET request (render signup form)
+    form = SignupForm()
     return render(request, 'signup.html', {'form': form})
 
 
